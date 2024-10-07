@@ -1,0 +1,819 @@
+% !TEX TS–program = pdflatexmk
+% !TeX program used: pdftex
+
+\documentclass[12pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{amsmath}
+
+%\usetheme{Madrid}
+%\usetheme{Marburg}
+\usetheme{Frankfurt}
+\useoutertheme{split}
+\setbeamertemplate{navigation symbols}{}
+\usepackage[orientation=landscape,size=custom,width=19,height=9,scale=0.5,debug]{beamerposter} 
+%\usepackage{enumitem}
+\usepackage{ragged2e}
+\usepackage{color}
+\usepackage{pgfpages}
+
+\let\olditem\item
+\renewcommand\item{\olditem\justifying}
+
+\usepackage[backend=biber]{biblatex}
+%\bibliographystyle{ieeetr}
+\addbibresource{references.bib}
+
+\setbeamerfont{footnote}{size=\tiny} %reduce the size of the footnote citation
+
+\setbeamertemplate{bibliography item}{\insertbiblabel}  % Add numbered list of references in the end
+
+\expandafter\def\expandafter\insertshorttitle\expandafter{%
+\insertshorttitle\hfill%
+\insertframenumber\,/\,\inserttotalframenumber}
+\linespread{1.2}
+\begin{document}  
+
+\AtBeginSection[]{
+\begin{frame}{Outline}
+\tableofcontents[currentsection,hideallsubsections]
+\addtocounter{framenumber}{-1}
+\end{frame}
+}
+
+\AtBeginSubsection[]{
+\begin{frame}[shrink]{Outline}
+\tableofcontents[sectionstyle=show/shaded,subsectionstyle=show/shaded/hide]
+\addtocounter{framenumber}{-1}
+\end{frame}
+}
+
+	\author{Zihang Liang}
+	\title{\textbf{Central Limit Theorem and Bootstrap in High Dimensions}}
+	\institute{\normalsize{University of Science and Technology of China}}
+		\maketitle
+
+
+
+\begin{frame}{Outline}
+    \tableofcontents[hideallsubsections]
+    \note<1>[item]{My talk will be in 4 parts. To begin with, I’ll introduce the background and the problem today I will talk about. Then in the second part, I’ll talk about the central limit theorem for hyperrectangles. In the thid part, I will introduce some generalizations. Some results for simple convex sets or sparsely convex sets. Finally, I will talk about its application in paramater Bootstrap}
+\end{frame}
+
+%以下是section:Introduction
+\section{Introduction}
+
+\begin{frame}[shrink]
+\frametitle{Introduction}
+    \begin{itemize}
+      \item Let $X_1,X_2,...,X_n$ be a sequence of random vectors in $\mathbb{R}^p$
+      \item Define the normalized sum of $X$:
+          \begin{equation}
+            \begin{aligned}
+               S_{n,X}=\frac{1}{\sqrt{n}}\sum_{i=1}^{n}X_i
+            \end{aligned} \nonumber
+           \end{equation}
+      \item Let covariance matrix $\Xi =$ cov($S_{n,X}$), and a Guassian random vector $G \sim N(\mathbf{0},\Xi)$
+      \item Define
+          \begin{equation}
+            \begin{aligned}
+               \rho_n(\mathcal{A})=\sup_{A\in \mathcal{A}}|\mathbb{P}(S_n^X\in A)-\mathbb{P}(G\in A)|
+            \end{aligned}
+           \end{equation}
+          where $\mathcal{A}$ is a class of Borel set of $\mathbb{R}^p$
+    \end{itemize}
+    
+    \note<1>[item]{Now lets move to the introduction of some concepts}
+    \note<1>[item]{a gaussian random vector G, whose covariance matrix is also ksai
+}
+    \note<1>[item]{Define the difference of two probabilities. The convergence rate of $\rho_n$ is what we care about.}
+\end{frame}
+
+
+\begin{frame}{Introduction}
+    \begin{itemize}
+      \item \textbf{Question:} how fast the $p=p_n$ is allowed to grow as $n \rightarrow \infty$ while guaranteeing $\rho_n \rightarrow 0$?\\ \note<1>[item]{Now here is the questions :how fast the dimension p is allowed to grow as n diverges to infinity while guaranteeing rho n converges to 0?}
+      \note<1>[item]{All the results before suggest that the dimension $p$ can grow at some power of n, but in application, however, dimension $p$ is often much larger than n.}
+      \item We hope to construct a convergence rate which allows $p$ to grow sub-exponentially fast in the sample size n.
+      \item The main result\footfullcite{CLT1}\footfullcite{CLT2} suggests that under some conditions, we have 
+\[\rho_n \rightarrow 0 \text{ if } p_n=O(e^{Cn^c})\]\note<1>[item]{The main results today I’ll talk about is from this two papers. They indicate that p can grow in sub-exponentially fast under some conditions.}
+\end{itemize}
+
+
+\end{frame}
+%以上是section:Introduction
+
+%以下是section:Abstract result
+\section{Central Limit Theorem for hyperrectangles}
+\begin{frame}{Notation}
+\note<1>[item]{Now lets move to the second part. Firstly, here are some notations involved later.}
+\setlength{\baselineskip}{1.5\baselineskip}
+    \begin{itemize}
+      \item For $x,y\in \mathbb{R}^p$, $x\leq y \Longleftrightarrow x_i\leq y_i$ ,$\forall i\in [p]$
+      \item For $x\in \mathbb{R}^p$, $|x|_p$ means p-norm, and $|x|_0 = \#\{i:x_i \neq 0\}$\note<1>[item]{The zero norm means the number of non-zero coordinates of x}
+      \item $a_n\ll b_n\Longleftrightarrow a_n=o(b_n)\Longleftrightarrow \lim\limits_{n\rightarrow \infty}\frac{a_n}{b_n}=0$
+      \item $a_n\lesssim b_n\Longleftrightarrow a_n=O(b_n)\Longleftrightarrow \limsup\limits_{n\rightarrow \infty}\frac{a_n}{b_n}<\infty$
+      \item $\psi_{\alpha}:[0,\infty)\rightarrow [0,\infty), \psi_{\alpha}(x)=\exp(x^{\alpha})-1$, where $\alpha \geq 1$\\Oclicz norm: $||X||_{\psi_{\alpha}}=inf\{\lambda:E[\psi_{\alpha}(|X|/\lambda)]\leq 1\}$\note<1>[item]{Orlicz norm，it can bound the distribution of the variable  X}
+    \end{itemize}
+    \end{frame}
+  %以下是subsection:CLT for independent data
+\subsection{Independent data}
+
+     
+\begin{frame}{Central Limit Theorem for independent data}
+\setlength{\baselineskip}{1.5\baselineskip}
+      \begin{itemize}
+          \item In this subsection, we assume that $\{X_i\}$ is an independent sequence.
+          \note<1>[item]{Now lets begin with the first case, the case of independent data}
+          \pause
+          \item Assume $\{X_i\}$ satisfy the following \textbf{conditions}:
+                \begin{itemize}
+                    \item \textbf{CI1: } (Non-degeneracy of convariance matrix) $\text{Var}(S_{n,X,j})\geq b$ for all $j\in [p]$\note<2>[item]{ CI1 means the condition 1 for independent data , it means the diagonal of covariance matrix is uniformly greater than 0}
+                    \item \textbf{CI2: } (Bound for moment) $n^{-1}\sum_{i=1}^{n}\mathbb{E}[|X_{i,j}|^{2+k}]\leq B_n^k$ for any $j\in [p], k=1,2$
+                \end{itemize}
+                \pause
+          \item smoothing: Let $\varrho_n=\sup\limits_{y \in \mathbb{R}^p,v\in [0,1]}|\mathbb{P}(\sqrt{v}S_{n,X}+\sqrt{1-v}G\leq y)-\mathbb{P}(G\leq y)|$
+          \note<3>[item]{Now we define $\rho_n$, compared with this $\rho_n$, it replaces $S_{n,X}$ with the interpolation terms. Obviously, when $v$ equals to 1, the right hand side is actually $\rho_n$}
+          \note<3>[item]{The interpolation is sort of smoothing method, since the independency of $S_{n,X}$ and $G$, the probability can be viewed as a convolution of two probability measures.}
+          \item Obviously, to bound $\rho_n(\mathcal{A}^{re})$, we just need to bound $\varrho_n$
+      \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Central Limit Theorem for independent data}
+    \begin{itemize}
+        \item By independency of $\{X_i\}$, let $Y_1,...,Y_n$ be a sequence of Guassian random vectors in $\mathbb{R}^p$, and $Y_i \sim N(\mathbf{0},E[X_iX_i^T])$, and $\{W_i\}$ is a copy of $\{Y_i\}$, then
+        $S_{n,Y}\overset{\text{d}}{=} S_{n,W}\overset{\text{d}}{=} G$, so \[\varrho_n=\sup\limits_{y \in \mathbb{R}^p,v\in [0,1]}|\mathbb{P}(\sqrt{v}S_{n,X}+\sqrt{1-v}S_{n,Y}\leq y)-\mathbb{P}(S_{n,W}\leq y)|\]
+        \note<1>[item]{We have the formula, $S_ {n,Y}$, $S_{n,W}$ and $G$ have the same distribution, so we can rewrite $\rho_n$ as this form.}
+        \item This method is called Slepian-Stein interpolation\footnote{It's actually Stein method and Slepian interpolation, but in fact they are the same method, see \footfullcite{SS} in Appendix H}
+        \note<1>[item]{By writing $\rho_n$ as this form, we will apply a method called Stein-Slepian method.It actually refers to Stein method and Slepian interpolation, but in fact essentially they are in common }
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[shrink]{Key Lemma}
+    \begin{itemize}
+        \item The Key Lemma indicates that $\varrho_n$ satisfies the following inequality for all $\phi \geq 1$:
+    \[\varrho_n\lesssim \frac{\phi^2\log^2 p}{n^{1/2}}\{\phi L_n\varrho_n+L_n\log^{1/2}p+\phi (M_{n,X}(\phi)+M_{n,Y}(\phi))\}+\frac{\log^{1/2}p}{\phi}\]
+    where 
+    \begin{equation}
+        \begin{aligned}
+            &M_{n,X}(\phi)=n^{-1}\sum_{i=1}^n\mathbb{E}[\max\limits_{1\leq j\leq p}|X_{i,j}|^31\{\max\limits_{1\leq j\leq p}|X_{i,j}|>\sqrt{n}/4\phi\log p\}]\\
+            &M_{n,Y}(\phi)=n^{-1}\sum_{i=1}^n\mathbb{E}[\max\limits_{1\leq j\leq p}|Y_{i,j}|^31\{\max\limits_{1\leq j\leq p}|Y_{i,j}|>\sqrt{n}/4\phi\log p\}]\\
+            &L_n=\max\limits_{j\in [p]}n^{-1}\sum_{i=1}^n\mathbb{E}[|X_{i,j}|^3]
+        \end{aligned}\nonumber
+    \end{equation}
+    \note<1>[item]{The key lemma is a general result. by selecting $\phi$ properly, we can get the final result. }
+    
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{High-dimensional CLT for hyperrectangles}
+    \begin{itemize}
+        \item Select $\phi$ properly, and bound $M_{n,X},M_{n,Y},L_n$ respectively, we can get an explicit result
+        \item (\textbf{Theorem}) Suppose that $||X_{i,j}||_{\psi_1}\leq B_n$ for all $i\in [n],j\in[p]$,then
+            \begin{equation}
+                \rho_n(\mathcal{A}^{re})\lesssim \frac{B_n^{1/3}\log^{7/6}(pn)}{n^{1/6}}\nonumber
+            \end{equation}
+        \item (\textbf{Theorem}) Suppose that $||X_{i,j}||_{\psi_{\gamma}}\leq B_n$ for all $i\in [n],j\in[p]$, and some $\gamma\geq 4$,then
+            \begin{equation}
+                \rho_n(\mathcal{A}^{re})\lesssim \frac{B_n^{1/3}\log^{7/6}(pn)}{n^{1/6}}+\frac{B_n^{2/3}\log(p)}{n^{(\gamma-2)/3\gamma}}\nonumber
+            \end{equation}
+            
+    \end{itemize}
+    \note<1>[item]{Here are the final results, you can see that it allows $p$ to grow sub-exponentially fast}
+\end{frame}
+
+
+\begin{frame}[shrink]{Sketch of proof of Key Lemma}
+The following is some preparations, we hope to smooth the $\varrho_n$:
+    \begin{itemize} 
+        \item Note that $x\leq y\Longleftrightarrow \max\limits_{j\in[p]}(x_j-y_j)\leq 0\Longleftrightarrow I_{(-\infty,0]}(\max\limits_{j\in[p]}(x_j-y_j))=1$, so
+        \begin{equation}
+              \begin{aligned}
+                     \varrho_n &= \sup\limits_{y \in \mathbb{R}^p,v\in [0,1]}|\mathbb{P}(\sqrt{v}S_{n,X}+\sqrt{1-v}S_{n,Y}\leq y)-\mathbb{P}(S_{n,W}\leq y)|\\ &= \sup\limits_{y \in \mathbb{R}^p,v\in [0,1]}|\mathbb{E}[I_{(-\infty,0]}(\max_{j\in [p]}(\sqrt{v}S_{n,X,j}+\sqrt{1-v}S_{n,Y,j}-y_j))]\\&-\mathbb{E}[I_{(-\infty,0]}(\max_{j\in [p]}(S_{n,W,j}-y_j))]|
+              \end{aligned}\nonumber
+           \end{equation} 
+        \item Smooth the function $I_{(-\infty,0]}$ and $\max\limits_{j\in [p]}(\cdot_j-y_j)$
+    \end{itemize}
+    \note<1>[item]{Now let’s move to the sketch of the key lemma.}
+    \note<1>[item]{Write the probability into the expectation forms, so we hope to smooth these two functions}
+\end{frame}
+
+\begin{frame}{Sketch of proof of Key Lemma}
+    \begin{itemize}
+        \item (Smooth indicate function)Let $g\in \text{C}^{\infty}:\mathbb{R}\rightarrow\mathbb{R}$ satisfy that $g(t) = 1$ for $t\leq 0$, and $g(t)=0$ for $t\geq \phi^{-1}$
+        \item (Smooth maximum function)Let $F_{\beta}(w) = \beta^{-1}\log(\sum\limits_{j=1}^p\exp(\beta(w_j-y_j))$, where $\beta = \phi\log p$
+        \item $F_{\beta}(w) \approx \max\limits_{j\in [p]}(w_j-y_j)$, $g\approx I_{(-\infty,0)}$.
+        \item Let $m=g\circ F_{\beta}$, $\mathcal{I}_n=m(\sqrt{v}S_{n,X}+\sqrt{1-v}S_{n,Y})-m(S_{n,W})$
+        \item  In fact, \[\varrho_n \lesssim |\mathbb{E}[\mathcal{I}_n]| + \phi^{-1}\log^{1/2}p\]
+    \end{itemize}
+    \note<1>[item]{first We hope to smooth the $\rho_n$ in order to apply Stein method}
+    \note<1>[item]{You can see the expectation of $I_n$ is approximately equal to this difference..}
+    \note<1>[item]{So we just need to bound the expectation of $I _n$}
+\end{frame}
+
+\begin{frame}{Sketch of proof of Key Lemma}
+
+    \begin{itemize}
+        \item double Slepian interpolant:\[Z_i(t)=\frac{1}{\sqrt{n}}\{\sqrt{t}(\sqrt{v}X_i+\sqrt{1-v}Y_i)+\sqrt{1-t}W_i\}\]
+    \[Z(t)=\sum_{i=1}^nZ_i(t)\]
+    So\[\mathcal{I}_n=\int_{0}^{1}\frac{dm(Z(t))}{dt}dt\]
+    \item Note that $\{Z_i\}$ is mutually independent
+    \end{itemize}
+    \note<1>[item]{Define the double Slepian interpolant so that we can rewrite $I _n$ into this integral by Newton-Lebnitz formula}
+\end{frame}
+
+\begin{frame}[shrink]{Sketch of proof of Key Lemma}
+Left-one-out:
+    \begin{itemize}
+        \item By Taylor expansion: let $Z^{(i)} = Z-Z_i \Longrightarrow Z^{(i)}$ is independent to $Z_i$
+        \small
+        \begin{equation}
+            \begin{aligned}
+                \mathbb{E}[\mathcal{I}_n] &= \frac{1}{2}\sum_{j\in [p]}\sum_{i\in [n]}\int_0^1\mathbb{E}[m_j(Z)\Dot{Z}_{i,j}]dt\\ &= \frac{1}{2}\sum_{j\in [p]}\sum_{i\in [n]}\int_0^1\mathbb{E}[m_j(Z^{(i)})\Dot{Z}_{i,j}]dt + \frac{1}{2}\sum_{j,k\in [p]}\sum_{i\in [n]}\int_0^1\mathbb{E}[m_{jk}(Z^{(i)})\Dot{Z}_{i,j}Z_{i,k}]dt + \\&\frac{1}{2}\sum_{j,k,l\in [p]}\sum_{i\in [n]}\int_0^1\int_0^1(1-\tau)\mathbb{E}[m_{jkl}(Z^{(i)}+\tau Z_i)\Dot{Z}_{i,j}Z_{i,k}Z_{i,l}]d\tau dt
+            \end{aligned}\nonumber
+        \end{equation}
+    \end{itemize}
+    \note<1>[item]{Then we use Taylor expansion to leave out a $Z _i$.}
+    \note<1>[item]{Because of the independency, we can directly calculate the first term and the second term. Both of them are equal to 0. So we just need to bound the last term.}
+\end{frame}
+
+\begin{frame}{Sketch of proof of Key Lemma}
+    \begin{itemize}
+        \item The independency of $\{X_i\} \Longrightarrow$ The first and second term equal to $0$, so we just need to bound the last term. Write the last term as $\uppercase\expandafter{\romannumeral3}$
+        \item Divide $\uppercase\expandafter{\romannumeral3}$ into small part and large part:
+        \begin{equation}
+            \begin{aligned}
+                &\uppercase\expandafter{\romannumeral3}_1=\sum_{j,k,l}\sum_{i}\int_0^1\int_0^1(1-\tau)E[\chi_im_{jkl}(Z^{(i)}+\tau Z_i)\Dot{Z}_{ij}Z_{ik}Z_{il}]d\tau dt\\
+     &\uppercase\expandafter{\romannumeral3}_2=\sum_{j,k,l}\sum_{i}\int_0^1\int_0^1(1-\tau)E[(1-\chi_i)m_{jkl}(Z^{(i)}+\tau Z_i)\Dot{Z}_{ij}Z_{ik}Z_{il}]d\tau dt
+            \end{aligned}\nonumber
+        \end{equation}
+        where $\chi_i=1\{\max\limits_{i\in [p],i\in [n]}\{|X_{i,j}|,|Y_{i,j}|,|W_{i,j}|\}\leq \sqrt{n}/4\beta\}$
+    \end{itemize}
+    
+\end{frame}
+
+\begin{frame}{Sketch of proof of Key Lemma}
+    \begin{itemize}
+        \item Estimate $\uppercase\expandafter{\romannumeral3}_1$, $\uppercase\expandafter{\romannumeral3}_2$ respectively
+        \item We have \[\mathbb{E}[\mathcal{I}_n]\lesssim \frac{\phi^2\log^2 p}{n^{1/2}}\{\phi L_n\varrho_n+L_n\log^{1/2}p+\phi (M_{n,X}(\phi)+M_{n,Y}(\phi))\}\]
+        
+    \end{itemize}
+    \note<1>[item]{The two terms (M) bound the large part. And the rest bound the small part.}
+    \note<1>[item]{Then through some technical estimations, we have the final result.}
+    \note<1>[item]{the key lemma only relate to the independency of $X$. The Conditions are applied to get an explicit results because we will apply some concentration inequalities.}
+    \note<1>[note]{The rest of the proof is some complicated derivation involved some concentration inequalities, I omit them here.}
+\end{frame}
+
+
+
+%以上是subsection:CLT for independent data
+\subsection{Dependent data}
+
+\begin{frame}{Central Limit Theorem for dependent data}
+Now, we hope to omit the independency of $\{X_i\}$.
+    \begin{itemize}
+        \item \textbf{Difficulty 1}: without independency, \textbf{Slepian interpolation} is invalid. \\
+        For example: Independent sequence $\{Y_i\}$ such that $Y_i \sim N(0, \Sigma_i)$, where $\Sigma_i = \text{cov}(X_i)$, however:
+        \begin{equation}
+            \text{cov}(G) = \text{cov}(S_{n,X}) =n^{-1}\sum_{t,s\in [n]}\mathbb{E}[X_tX^T_s] \neq n^{-1}\sum_{t\in [n]}\mathbb{E}[X_tX_t^T] = \text{cov}(S_{n,Y}) \nonumber
+        \end{equation}
+        In other word, interpolating for each $X_i$ \textbf{cannot approximate} $G$.
+        \end{itemize}
+        \note<1>[item]{We hope to omit the independent condition of X, but in that case we will encounter some difficulties. For instance, if we choose a series of normal distribution $Y _i$ like what we do in independent case, you will find the covariance of $S_{n,Y}$ and G are not in common.}
+        \note<1>[item]{That means that $S_{n,Y}$ cannot approximate $G$}
+\end{frame}
+
+\begin{frame}{Central Limit Theorem for dependent data}
+    \begin{itemize}
+        \item \textbf{Difficulty 2}: without independency,  \textbf{left-one-out method} is invalid.
+        \\For example:
+        \begin{equation}
+            \mathbb{E}[m_j(Z^{(i)})\Dot{Z}_{i,j}] = \mathbb{E}[m_j(Z^{(i)})\mathbb{E}[\Dot{Z}_{i,j}|\mathcal{F}]] \neq 0 \nonumber
+        \end{equation}
+        In other words, we have to bound the \textbf{conditional expectation} respectively!
+    \end{itemize}
+    \note<1>[item]{The expectation in the first term and the second term in the left-oneout step are not equal to 0 without independency, and there is a conditional expectation. So we have to bound the conditional expectation additionally.}
+\end{frame}
+
+
+\begin{frame}{Central Limit Theorem for dependent data}
+    \begin{itemize}
+     \item \textbf{Solution 1}: "Package" data so that we can approximate $G$ applying interpolation: 
+     \begin{itemize}
+         \item Large-and-small-blocks
+     \end{itemize}
+     \pause
+     \item \textbf{Solution 2}: Introduce some measures to measure the dependency (Do not be too corelated), which can help us to bound conditional expectation: 
+        \begin{itemize}
+            \item $\alpha$-mixing sequence
+            \item Dependency graph
+            \item Sequence with physical dependence
+        \end{itemize}
+      
+    \end{itemize}
+    Later, we always assume $p\geq n^{\kappa}$ since we only care about the case that $p \gg n$.
+    \note<1>[item]{Here are some solutions to overcome these difficulties}
+    \note<1>[item]{First, the large and small blocks can deal with the difficulty 1, its idea is that we not require a strictly equation of the convariance of $S_{n,X}$ and $G$, instead, we only require that the covariance of $S_{n,Y}$ can approximate $G$}
+    \note<2>[item]{The solution 2 can deal with the difficulty 2. It introduce some approaches to bound the conditional expectation. The first is alpha-mixing, it is actually a weak independency. The second is dependency graph, it can directly control the number of correlated random vectors. That means that , Being independent of all other random vectors can be weakened to be correlated with a small number of random vectors. And the last one is a specific time series model.}
+\end{frame}
+
+\begin{frame}{CLT for dependent data: $\alpha$-mixing sequence}
+\setlength{\baselineskip}{1.5\baselineskip}
+Concepts of $\alpha-$mixing:
+    \begin{itemize}
+        \item $\mathcal{A},\mathcal{B}$ are $\sigma$-field, let $\alpha(\mathcal{A},\mathcal{B}) = \sup\limits_{A\in \mathcal{A},B\in \mathcal{B}}|\mathbb{P}(A)\mathbb{P}(B)-\mathbb{P}(AB)|$
+        \item Let $\mathcal{F}_{-\infty}^t = \sigma(X_i,i\leq t)$, $\mathcal{F}_{t}^{\infty} = \sigma(X_i,i\geq t)$
+        \item $\alpha$-coefficient of $\{X_i\}$: $\alpha(n)$ = $\sup\limits_{t\geq 1}\alpha(\mathcal{F}_{-\infty}^t, \mathcal{F}_{t+n}^{+\infty})$
+        \item $\{X_i\}$ is a $\alpha$-mixing (or strong mixing) sequence, if $\lim\limits_{n\rightarrow \infty}\alpha(n)=0$ 
+    \end{itemize}
+    \note<1>[item]{Now I will talk about the alpha mixing sequence.}
+    \note<1>[item]{First define the alpha coefficient for sigma fields}
+    \note<1>[item]{Let this two sigma fields generated by $X$, and then we can define the alpha coefficient at time lag n of the sequence $X$}
+    \note<1>[item]{If $X$ is an independent sequence, then the alpha coefficients are equal to 0, but here we only require them to converge to 0. So it’s a properly generalization.}
+\end{frame}
+
+\begin{frame}{CLT for dependent data: $\alpha$-mixing sequence}
+    There are some conditions which we will assume later.
+         \begin{itemize}
+             \item \textbf{Condition 1} (Sub-exponential moment). There exist constants$\gamma_1\geq 1, B_n\geq 1$, such that $||X_{i,j}||_{\psi_{\gamma_1}}\leq B_n$ ($\Rightarrow$ distribution function $\mathbb{P}(|X|>u)$ has an exponential decay)
+             
+             \item \textbf{Condition 2} (Decay of $\alpha$-mixing coefficient). There exist some universal constants $K_1>1,K_2>0$ and $\gamma_2>0$, such that $\alpha_n(k)\leq K_1\exp(-K_2k^{\gamma_2})$ for any $k\geq 1$
+             
+             \item \textbf{Condition 3} (Non-degeneracy of covariance matrix). There exist a universal constant $K_3>0$ such that $\min\limits_{j\in [p]}\text{Var}(S_{n,X,j})\geq K_3$
+         \end{itemize}
+         \note<1>[item]{Here are some conditions, the Condition 1 and 3 will be also assumed in other cases, while the Condition 2 is only used in alpha mixing case.}
+         \note<1>[item]{You can see the condition 1 and 3 are similar with the Condition 1and 2 for independent data. They are useful in concentration inequality to bound the expectation. And Condition 2 requires the alpha-coefficients to decay fast enough. You can think that the faster they decay, the more independency the sequence X have . So, It will be used to bound the conditional expectation. We hope the conditional expectation as small as possible }
+\end{frame}
+
+
+  
+\begin{frame}{CLT for dependent data: $\alpha$-mixing sequence}
+    \begin{itemize}
+        \item Recall that $\varrho_n=\sup\limits_{y \in \mathbb{R}^p,v\in [0,1]}|\mathbb{P}(\sqrt{v}S_{n,X}+\sqrt{1-v}G\leq y)-\mathbb{P}(G\leq y)|$
+        \item (\textbf{Theorem}) Assume $\{X_i\}$ is an $\alpha$-mixing sequence. Under \textbf{Conditions 1-3}:
+        \begin{equation}
+            \varrho_n \lesssim \frac{B_n^{2/3}(\log p)^{(1+2\gamma_2)/3\gamma_2}}{n^{1/9}}+\frac{B_n(\log p)^{7/6}}{n^{1/9}}\nonumber
+        \end{equation}
+        provided that $(\log p)^{3-\gamma_2} = o(n^{\gamma_2/3})$
+    \end{itemize}
+    \note<1>[item]{Here is the final result for alpha mixing sequence. The dimension $p$ can grow in sub-exponentially fast.}
+\end{frame}
+
+%\begin{frame}{Large-and-Small-Blocks Technique}
+    %\begin{itemize}
+    %    \item \textbf{Difficulty}: without independency, %\textbf{left-one-out method} is invalid.
+    %    \\For example:
+    %    \begin{equation}
+    %        \mathbb{E}[m_j(Z^{(i)})\Dot{Z}_{i,j}] = \mathbb{E}[m_j(Z^{(i)})\mathbb{E}[\Dot{Z}_{i,j}|\mathcal{F}]] \neq 0 \nonumber
+    %    \end{equation}
+    %    In other words, we have to bound the \textbf{conditional expectation} respectively!
+    %    \pause
+     %   \item To overcome this difficulty, we apply a technique called \textbf{"large-and-small-blocks"}
+%    \end{itemize}
+%\end{frame}
+
+
+
+\begin{frame}{Large-and-Small-Blocks Technique: Details}
+\setlength{\baselineskip}{1.5\baselineskip}
+
+    \begin{itemize}
+        \item Let $Q = o(n)$, and $Q = b+h$, where $h\ll b$
+        \pause
+        \item Divide the sequence into $L$ blocks: $L = \lfloor \frac{n}{Q}\rfloor$
+        \pause
+        \item Divide each blocks into large parts and small parts: For $\ell\in [L]$, Let $\mathcal{G}_{\ell}=\{\ell Q+1, \ell Q+2,...,\ell Q+b,...(\ell+1)Q\}$ , and $\mathcal{I}_{\ell}=\{\ell Q+1, \ell Q+2,...,\ell Q+b\}$ , $\mathcal{J}_{\ell} = \{\ell Q+b+1,...,(\ell+1)Q\}$ , and $\mathcal{J}_{L+1} = \{\text{The remaining } X_t\}$
+        \pause
+        \item packaging: Let $\Tilde{X}_{\ell} = b^{-1/2}\sum\limits_{t\in \mathcal{I}_{\ell}}X_t$ %$\Check{X}_{\ell} = h^{-1/2}\sum\limits_{t\in \mathcal{J}_{\ell}}X_t$, \\$\Check{X}_{L+1} = |\mathcal{J}_{L+1}|^{-1/2}\sum\limits_{t\in \mathcal{J}_{L+1}}X_t$
+    \end{itemize}
+    \note<1>[item]{Now I will talk about the Large-and-small blocks technique}
+    \note<1>[item]{First, let $Q$ be the size of each block, and $b$ is the size of large block, $h$ is the size of small block. $b$ and $h$ will be determined later}
+    \note<3>[item]{Let G L be the index set of each blocks, and Let $I_l$, $J_l$ be the index set of large and small blocks respectively}
+    \note<4>[item]{X tilde is the normalized sum of large blocks}
+\end{frame}
+
+\begin{frame}{Large-and-Small-Blocks Technique: Details}
+\setlength{\baselineskip}{1.5\baselineskip}
+    \begin{itemize}
+        \item A series of normal random vectors: Let independent sequence $\{Y_t\}_1^n$ such that $Y_t \sim \text{N}(0,\mathbb{E}[\Tilde{X}_{\ell}\Tilde{X}_{\ell}^{\top}])$ for $t \in \mathcal{I}_{\ell}$
+        \item blocks of $\{Y_t\}$: Define $\Tilde{Y}_{\ell} = b^{-1/2}\sum\limits_{t\in \mathcal{I}_{\ell}}Y_t$. Corresponding: $\Tilde{Y}_{\ell}\longleftrightarrow \Tilde{X}_{\ell}$
+        \item normalized sum: $S_{n,X} = \frac{1}{\sqrt{n}}\sum_{t=1}^{n}X_t$, $S_{n,X}^{(1)} = \frac{1}{\sqrt{L}}\sum_{\ell=1}^{L}\Tilde{X}_{\ell}$, $S_{n,Y}^{(1)} = \frac{1}{\sqrt{L}}\sum_{\ell=1}^{L}\Tilde{Y}_{\ell}$
+    \end{itemize}
+    \note<1>[item]{Y tilde l is a Gaussian copy respect to each large block}
+    \note<1>[item]{$S_{n,X}^{(1)}$ is the normalized sum of large blocks, throwing out all of the small blocks}
+\end{frame}
+
+\begin{frame}{Large-and-Small-Blocks Technique: Advantage}
+\textbf{Advantages}:
+\pause
+    \begin{itemize}
+        \item By dividing the sequence $\{X_i\}$ into a series of "large blocks" and "small blocks", we can construct a series of normal distribution $\{Y_{\ell}\}$, such that $G \approx n^{-1/2}\sum\limits_{\ell} Y_{\ell}$ , so we can apply \textbf{Slepian interpolation} for these "blocks".
+        \pause
+        \item By throwing out "small blocks", we can construct "time gap" between 2 "large blocks". As a result, we can bound the conditional expectation by $\alpha(n)$
+    \end{itemize}
+    \note<1>[item]{There are some advantages of this method}
+\end{frame}
+
+\begin{frame}{Sketch of proof}
+    \begin{itemize}
+       \item By triangle inequality:\small
+       \begin{equation}
+       \begin{aligned}
+           \varrho_n \leq &\underbrace{\sup\limits_{y \in \mathbb{R}^p,v\in [0,1]}|\mathbb{P}(\sqrt{v}S_{n,X}+\sqrt{1-v}G\leq y)-\mathbb{P}(\sqrt{v}S_{n,X}+\sqrt{1-v}S_{n,Y}^{(1)}\leq y)|}_{I_1} 
+           \\&+ \underbrace{\sup\limits_{y \in \mathbb{R}^p,v\in [0,1]}|\mathbb{P}(\sqrt{v}S_{n,X}+\sqrt{1-v}S_{n,Y}^{(1)}\leq y)-\mathbb{P}(S_{n,Y}^{(1)}\leq y)|}_{I_2} 
+           \\&+ \underbrace{\sup\limits_{y \in \mathbb{R}^p}|\mathbb{P}(S_{n,Y}^{(1)}\leq y)-\mathbb{P}(G\leq y)|}_{I_3}
+           \end{aligned}\nonumber
+       \end{equation}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Sketch of proof}
+\setlength{\baselineskip}{1.5\baselineskip}
+Bound $I_1$, $I_3$:
+
+    \begin{itemize}
+        \item \textbf{(Gaussian comparison)} $|\mathbb{P}(S_{n,Y}^{(1)}\leq y)-\mathbb{P}(G\leq y)| \lesssim |\textbf{cov}(S_{n,Y}^{(1)})-\textbf{cov}(G)|_{\infty}(\log p)^{2/3} $
+        \item \textbf{(Difference of covariance matrix)} $|\textbf{cov}(S_{n,Y}^{(1)})-\textbf{cov}(G)|_{\infty}\lesssim B_n^2(hb^{-1}+bn^{-1})$
+        \item $I_1\leq I_3$
+    \end{itemize}
+    \note<1>[item]{The Condition 1,3 are applied here, to bound the difference of the covariance}
+    \note<1>[item]{The Gaussian comparison and the estimate of covariance bound the $I_3$}
+    \note<1>[item]{Since $G$ and $S_{n,Y}$ are independent to $S_{n,X}$, so $I_1$ is actually a convolution of two probability measures. It's easy to derive $I_1$ less than $I_3$}
+    \note<1>[item]{So we only need to bound the $I_2$, which is the most difficult part, and we will apply the Stein-Slepian method again.}
+\end{frame}
+
+\begin{frame}{Sketch of proof}
+\small
+    \begin{itemize}
+        \item $I_2\approx \sup\limits_{y \in \mathbb{R}^p,v\in [0,1]}|\mathbb{P}(\sqrt{v}S_{n,X}^{(1)}+\sqrt{1-v}S_{n,Y}^{(1)}\leq y)-\mathbb{P}(S_{n,Y}^{(1)}\leq y)|\xrightarrow{\text{Slepian-Stein Method}}$Bound
+        \item The right-hand side just replaces $S_{n,X}$ in $I_2$ by $S_{n,X}^{(1)}$. What we do is throwing out the "small blocks" so that we can apply Slepian-Stein method.
+        \item $\tilde{X}_{\ell}$ and $\tilde{X}_{\ell+1}$ have a time gap $h$(the size of small blocks).
+        \item Bound conditional expectation by $\alpha(n)$: $\mathbb{E}\{|\mathbb{P}(\tilde{X}_{\ell,j}>u | \mathcal{F}_{-\ell}) - \mathbb{P}(\tilde{X}_{\ell,j}>u)|\}\lesssim \alpha(h)$, where $\mathcal{F}_{-\ell} = \sigma(\{\tilde{X}_s\}_{s\neq \ell})$. 
+    \end{itemize}
+    \note<1>[item]{The inequality can bound the conditional expectation}
+    \note<1>[item]{The rest of proof is some complicated estimation using the concentration inequalities, so I omit here}
+\end{frame}
+\begin{frame}{CLT for dependent data: Dependent graph}
+    \begin{itemize}
+        \item Let undirected graph $G_n=(V_n, E_n)$, where $V_n = [n]$ with $t \stackrel{denote}{\Longleftrightarrow} X_t$, $(t,s)\in E_n\Longleftrightarrow $ $X_t$ and $X_s$ are dependent. In particular, $(t,t)\in E_n$ for all $t$.
+        \pause
+        \item \textbf{(Packaging)} Let $\mathcal{N}_t := \{s: (t,s)\in E_n\}$ be the set of neighbor of $X_t$, and $\mathcal{N}_t^* := \cup_{s\in \mathcal{N}_t} \mathcal{N}_s$ be the set of second-degree neighbor of $X_t$.
+        \item $D_n := \max\limits_{t\in [n]}|\mathcal{N}_t|$, $D_n^* :=\max\limits_{t\in [n]}|\mathcal{N}_t^*|$
+        \item Let $Z_{\mathcal{N}_t} := \sum\limits_{t\in \mathcal{N}_t}Z_t$ be the sum of the random vector dependent to $Z_t$.
+    \end{itemize}
+    \note<1>[item]{Considering Slepian-Stein method we apply in the case of independent data, a direct modification of the proof is to package those dependent random vectors, and treating them as a whole. To do this, we consider dependent graph of $\{X_t\}$.}
+    \note<1>[item]{Let $G_n$ be a graph with vertex set $V_n$, where vertex t denotes the random vectors $X_t$ and the edge (s,t) is in the edge set $E_n$ if and only if $X_t$ and $X_s$ are dependent. And in particular, (t,t) is belong to $E_n$ for all t.}
+    
+    \note<2>[item]{$D_n$,$D_n^*$ are the maximum of the number of the neighbors}
+    \note<2>[item]{Package the neighbor of $Z_t$ and write it as $Z_{N_t}$}
+\end{frame}
+
+\begin{frame}{CLT for dependent data: Dependent graph}
+\setlength{\baselineskip}{1.5\baselineskip}
+    The proof coincides with the proof in the case of independent data. What difference is when left-one-out by Taylor expansion: 
+    \begin{itemize}
+        \item \textbf{Independent :} $m(Z) = m(Z^{(-t)}) + \sum m_j(Z^{(-t)})Z_{t,j} +...$
+        
+        \item \textbf{Dependent :} $m(Z) = m(Z^{(-\mathcal{N}_t)}) + \sum m_j(Z^{(-\mathcal{N}_t)})Z_{\mathcal{N}_t,j} + ...  $
+    \end{itemize}
+    \note<1>[item]{The proof coincides with the proof for independent data. What difference is in left-one-out step. In the case of independent data, We expand $m(Z)$ at $Z^{-t}$. But in the case of dependent graph, we expand $m(Z)$ at $Z^{(-N_t)}$. The $Z^{-N_t}$ means $Z- Z_{N_t}$, romoving all the neighbor of $Z_t$}
+    \note<1>[item]{The reason is Z (-Nt) is independent to $Z_t$, the independency allows the left-one-out step to work, because the first term is independent to $Z_t$ so If multiply the first term by $Z_t$ it's expectation is equal to 0. And If we apply Taylor expansion again to expand the second term at the point that remove all the second-degree negihbors of $Z_t$. Then it's expectation can be also equal to 0. That make the Slepian-Stein method work.}
+\end{frame}
+
+\begin{frame}{CLT for dependent data: Dependent graph}
+    \begin{itemize}
+        \item \textbf{(Theorem)} Suppose \textbf{Condition} 1 and 3, it holds that
+        \begin{equation}
+            \varrho_n\lesssim \frac{B_n(D_nD_n^*)^{1/3}(\log p)^{7/6}}{n^{1/6}}\nonumber
+        \end{equation}
+    \end{itemize}
+    \note<1>[item]{Here is the theorem in the case of dependent graph}
+\end{frame}
+
+
+
+\begin{frame}{CLT for dependent data: physical dependence}
+In this section, we consider time series model.
+\setlength{\baselineskip}{1.5\baselineskip}
+    \begin{itemize}
+        \item Time series model: $X_t = f_t(\epsilon_t, \epsilon_{t-1},...)$, where $t\geq 1$
+        \item \textbf{(Coupling)}$\epsilon_t' $ independent copy of $\epsilon_t $, let $X_{t,\{m\}}' := f_t(\epsilon_t, \epsilon_{t-1},...,\epsilon_{t-m}',\epsilon_{t-m-1},...)$
+        \item $\theta_{m,q,j} = \sup\limits_{t\geq 1}||X_{t,j}-X_{t,j,\{m\}}'||_{q}$, $\Theta_{m,q,j} = \sum_{i=m}^{\infty}\theta_{i,q,j}$, where $q>0$
+        \item $||X_{\cdot,j}||_{q,\alpha} = \sup\limits_{m\geq 0}(m+1)^{\alpha}\Theta_{m,q,j}$, and $||X_{\cdot,j}||_{\psi_{\nu},\alpha} = \sup\limits_{q\geq 2}q^{-\nu}||X_{\cdot,j}||_{q,\alpha}$
+        \item $\Psi_{q,\alpha} = \max\limits_{j\in [p]}||X_{\cdot,j}||_{q,\alpha}$, $\Phi_{\psi_{\nu},\alpha} = \max\limits_{j\in [p]}||X_{\cdot,j}||_{\psi_{\nu},\alpha}$
+    \end{itemize}
+    \note<1>[item]{Now let's turn to the last case, physical dependence}
+    \note<1>[item]{There are many new concepts.}
+    \note<1>[item]{every $X_t$ is like this form. the $\epsilon_t$ are independent and identically distributed random variables, which can be viewed as the input of the non-linear system. $f_t$ is like a data generating mechanism, which change over time.}
+    \note<1>[item]{To measure the temporal dependence, the idea is to couple the output. In particular, let $\epsilon_t$ prime be an independent copy of $\epsilon_t$ and the coupling X t m prime are like this form, it replaces the $\epsilon_{t-m}$ with its copy $\epsilon_{t-m}$ prime}
+    
+    \note<1>[item]{The following are some norms which can qualify the temporal dependence }
+    
+\end{frame}
+
+\begin{frame}{CLT for dependent data: physical dependence}
+    \begin{itemize}
+        \item \textbf{(Theorem)} $\Phi_{\psi_{\nu},\alpha}<\infty$ for some $\alpha, \nu$,then:\\
+        
+        (i) Under \textbf{Condition} 3,
+        \begin{equation}
+            \varrho_{n} \lesssim \frac {\Phi_{\psi_ {\nu },0}(\log p)^{7/6}}{n^ {\alpha /(3+9\alpha )}} + \frac {\Psi_{2,\alpha }^{1/3}\Psi_{2,0}^ {1/3}(\log p)^ {2/3}}{n^ {\alpha /(3+9\alpha )}} + \frac { \Phi_{\psi_{\nu },\alpha}(\log p)^ {1+\nu } }{n^ {\alpha /(1+3\alpha )}} \nonumber
+        \end{equation}
+        provided that $
+(\log p)^{\max \{6 \nu-1,(5+6 \nu) / 4\}}=o\left\{n^{\alpha /(1+3 \alpha)}\right\}$
+\\
+        (ii)Under \textbf{Condition} 1 and 3, 
+             \begin{equation}
+                 \varrho_n \lesssim \frac{B_n (\log p)^{7/6}}{n^{\alpha/(12 + 6\alpha)}} + \frac{\Psi_{2, \alpha}^{1/3} \Psi_{2,0}^{1/3} (\log p)^{2/3}}{n^{\alpha/(12 + 6\alpha)}} + \frac{\Phi_{\psi_{\nu},\alpha} (\log p)^{1 + \nu}}{n^{\alpha/(4 + 2\alpha)}} \nonumber
+             \end{equation}
+    \end{itemize}
+    \note<1>[item]{The final result has 2 part, part 1 is under the condition3 and part 2 is under the condition 1 and 3. Part 2 is easier to proof because of the Condition 1.}
+\end{frame}
+
+\begin{frame}{CLT for dependent data: physical dependence}
+\setlength{\baselineskip}{1.5\baselineskip}
+   \begin{itemize}
+       \item \textbf{Idea}: \textbf{Large-and-small-blocks method} to create "time gap". \textbf{Conditional expectation} and "time gap" to create independency.
+       \item Apply \textbf{Large-and-small-blocks} with large size $b$, and small size $m$.
+       \item Conditional expectation with time lag $m$: For each random vector $X_t$, define $X_t^{(m)} := \mathbb{E}[X_t|\epsilon_t,...,\epsilon_{t-m}]$
+       \item $X_t^{(m)}$ is m-dependent sequence: $X_t^{(m)}$ is independent to $X_{t+m+1}^{(m)} $
+   \end{itemize}       
+   \note<1>[item]{Now I simply state the main idea in the proof}
+   \note<1>[item]{the main idea of the proof is to create an independent sequence}
+   \note<1>[item]{The conditional expectation of $X$only depends on $\epsilon_t$ to $\epsilon_{t-m}$, since $\epsilon_t$ is mutually independent, we have  } 
+\end{frame}
+
+\begin{frame}{CLT for dependent data: physical dependence. Part(ii)}
+    \begin{itemize}
+    \item If $\{X_t\}$ satisfy \textbf{Condition 1 and 3}, since $\{X_t^{(m)}\}$ is $m$-dependent sequence with $m\ll b\ll n$, the result for dependent graph derives \textbf{part (ii)} of the theorem.
+        \item If $\{X_t\}$ just satisfy \textbf{Condition 3}, without sub-exponential moment bounds, the conditions of the dependent graph theorem don't hold.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{CLT for dependent data: physical dependence. Part(i)}
+    \setlength{\baselineskip}{1.5\baselineskip}
+    Now we don't have exponential moment bound
+    \begin{itemize}
+        \item Let $\mathcal{F}_t = \sigma\{\epsilon_t,\epsilon_{t-1},...\}$
+        \item Define a projection operator $\mathcal{P}_t(\cdot):= \mathbb{E}[\cdot|\mathcal{F}_t]-\mathbb{E}[\cdot|\mathcal{F}_{t-1}]$. $\{\mathcal{P}_t\}$ is a family of mutually orthogonal operator: $\mathbb{E}[\mathcal{P}_s(X)\mathcal{P}_t(X)]=0$ if $s\neq t$
+
+        \item Then $X_t=\sum_{s=0}^{\infty}\mathcal{P}_{t-s}(X_t)$, and $||\mathcal{P}_{t-s}(X_{t,j})||_{q}\leq ||X_{t,j}-X_{t,j,\{s\}}'||_q\leq \theta_{s,q,j}$    
+    \end{itemize}
+    \note<1>[item]{$X_t$ can be decomposed by $P_t$, and we can bound the moment of each part.}
+\end{frame}
+
+\begin{frame}{CLT for dependent data: physical dependence. Part(i)}
+\setlength{\baselineskip}{1.5\baselineskip}
+  \begin{itemize}
+      \item As a result, though we don't have bounds for exponential moment, we can prove that the probability of "large part" decay in exponentially fast: \[\mathbb{P}(|\Tilde{X}_{\ell}|>u)\lesssim \exp(-C(u\Phi_{\psi_{\nu},\alpha}^{-1})^{\gamma})\]
+      \item Large-and-small-blocks technique derives  Part(i) of the theorem
+  \end{itemize}  
+\end{frame}
+
+\section{Generalization}
+
+\begin{frame}{CLT: For simple convex set}
+Some concepts of simple convex set:
+    \begin{itemize}
+        \item For closed convex set $A$, support function: $S_A(x) = \sup\limits_{y\in A} x^Ty$. Representation: $A = \cap_{v\in \mathbb{S}^{p-1}}\{x:x^Tv\leq S_A(v)\}$
+    
+        \item Polyhedron: $A = \cap_{v\in \mathcal{V}(A)}\{x:x^Tv\leq S_A(v)\}$, where $\mathcal{V}(A)$ is a finite subset of $\mathbb{S}^{p-1}$.
+
+        \item  $x\in A  \Longleftrightarrow v^Tx \leq S_A(v)$ for all $v\in \mathcal{V}(A)$
+
+        \item For each $A$, corresponding: Random vector $X\in \mathbb{R}^p \mapsto$  $\Tilde{X} := (v^TX)_{v\in \mathcal{V}(A)} \in \mathbb{R}^{|\mathcal{V}(A)|}$
+        \item $\mathbb{P}(X\in A)$ = $\mathbb{P}(\Tilde{X}\leq (S_A(v))_v)$
+    \end{itemize}
+    \note<1>[item]{First, I will introduce generalization to simple convex set.}
+    \note<1>[item]{A polyhedron means that its representation only depends on finite vectors. V(A) is a finite subset of the sphere}
+    \note<1>[item]{With the representation, we have that x belong to A is equivalent to x satisfies these inequalities}
+    \note<1>[item]{For each polyhedron A, we have a corresponding}
+    \note<1>[item]{By the observation above, we have the equation, which converts the probability of polyhedron to the hyperrectangales}
+\end{frame}
+
+\begin{frame}{CLT: For simple convex set}
+\setlength{\baselineskip}{1.5\baselineskip}
+    \begin{itemize}
+        \item fattening or shrinking a convex set: $A^{\epsilon} := \cap_{v\in \mathbb{S}^{p-1}}\{x:x^Tv\leq S_A(v)+\epsilon\}$ 
+        \item $A^K\subset A\subset A^{K,\epsilon}$: $A$ can be approximated by a polyhedron $A^K$ with $|\mathcal{V}(A)| = K$ with precision $\epsilon$.
+        \item A family of subset $\mathcal{A}^{si}(a,d) := \{A \text{ convex}: A \text{ can be approximated by }A^K$   satisfying $K\leq (pn)^d \text{with precision }\epsilon = a/n\}$
+    \end{itemize}
+    \note<1>[item]{Moreover, we can shrink or fatten a convex set like this}
+    \note<1>[item]{Now we can define the simple convex set it refers to a convex set which can be approximated by a polyhedron $A^K$ with precision $\epsilon$}
+    \note<1>[item]{And a family of simple convex set with parameter $a$, $d$}
+\end{frame}
+
+\begin{frame}{CLT: For simple convex set}
+    
+         Let $A\in \mathcal{A}^{si}(a,d)$,\\ $\rho^K := |\mathbb{P}(S_{n,X}\in A^K)-\mathbb{P}(G\in A^K)|$ , 
+     $\rho^{K,\epsilon} := |\mathbb{P}(S_{n,X}\in A^{K,\epsilon})-\mathbb{P}(G\in A^{K,\epsilon})|$, then
+        \begin{equation}
+            |\mathbb{P}(S_{n,X}\in A)-\mathbb{P}(G\in A)|\leq \epsilon(\log K)^{1/2} + \rho^K +\rho^{K,\epsilon}\nonumber
+        \end{equation}
+    \note<1>[item]{It's easy to prove the left hand side can be bounded by $\rho^k$ and $\rho^{K,\epsilon}$ and these 2 terms are bounded by the result in the case of hyperrectangales. And this term is an error term.  }
+\end{frame}
+
+\begin{frame}{CLT: For simple convex set}
+$\mathcal{A}\subset \mathcal{A}^{si}(a,d)$ such that $\Tilde{X}_i$ satisfies condition \textbf{CI1,2} uniformly for all $A\in \mathcal{A}$
+    \begin{itemize}
+        \item \textbf{(Independent)} (i)Suppose that $||v^TX_i||_{\psi_1}\leq B_n$ for all $i\in [n], v\in \mathcal{V}(A)$,then
+        \begin{equation}
+                \rho_n(\mathcal{A})\lesssim \frac{B_n^{1/3}\log^{7/6}(pn)}{n^{1/6}}\nonumber
+            \end{equation}
+            (ii)Suppose that $||v^TX_i||_{\psi_{\gamma}}\leq B_n$ for all $i\in [n], v\in \mathcal{V}(A)$, and some $\gamma\geq 4$, then
+            \begin{equation}
+                \rho_n(\mathcal{A}^{re})\lesssim \frac{B_n^{1/3}\log^{7/6}(pn)}{n^{1/6}}+\frac{B_n^{2/3}\log(p)}{n^{(\gamma-2)/3\gamma}}\nonumber
+            \end{equation}
+    \end{itemize}
+    \note<1>[item]{Now here are the final result, it ensure the dimensions can grow in sub-exponentially fast}
+\end{frame}
+
+\begin{frame}{CLT: For simple convex set}
+$\mathcal{A}\subset \mathcal{A}^{si}(a,d)$ such that $\Tilde{X}_i$ satisfies \textbf{Condition 1,3} uniformly for all $A\in \mathcal{A}$
+    \begin{itemize}
+        \item \textbf{(Dependent, $\alpha$-mixing)} If $X_i$ also s.t. \textbf{Condition 2}($\Rightarrow \Tilde{X}_i$ s.t.)
+        \begin{equation}
+             \rho_n(\mathcal{A}) \lesssim \frac{a (d\log p)^{1/2}}{n} + \frac{B_n^{2/3} (d\log p)^{(1 + 2\gamma_2)/(3 \gamma_2)}}{n^{1/9}} + \frac{B_n (d\log p)^{7/6}}{n^{1/9}} \nonumber
+        \end{equation}
+        provided that $(d\log p)^{3-\gamma_2} = o(n^{\gamma_2/3})$
+        \item \textbf{(Dependent, Dependent graph)}
+        \begin{equation}
+            \rho_n(\mathcal{A}) \lesssim \frac{a(d \log p)^{1 / 2}}{n}+\frac{B_n\left(D_n D_n^*\right)^{1 / 3}(d \log p)^{7 / 6}}{n^{1 / 6}} \nonumber
+        \end{equation}
+         
+    \end{itemize}
+\end{frame}
+\begin{frame}[shrink]{CLT: For simple convex set}
+For each polyhedron $A$ , define $\Psi_{q,\alpha}(A)$, $\Phi_{\psi_{\nu},\alpha}(A)$ with respect to $\{\Tilde{X}_t\}$. Let $\Psi_{q,\alpha,\mathcal{A}} := \sup\limits_{A\in \mathcal{A}}\Psi_{q,\alpha}(A^K)$, $\Phi_{\psi_{\nu},\alpha,\mathcal{A}} := \sup\limits_{A\in \mathcal{A}}\Phi_{\psi_{\nu},\alpha}(A^K)$
+    \begin{itemize}
+        \item \textbf{(Dependent, Physical dependence)}(i) If $\mathcal{A}$ satisfies \textbf{Condition 3}, and $\Phi_{\psi_{\nu},\alpha,\mathcal{A}}<\infty$, 
+        \begin{equation}
+\begin{aligned}
+\rho_n(\mathcal{A}) \lesssim \frac{a(d \log p)^{1 / 2}}{n}  +\frac{\Phi_{\psi_\nu, 0, \mathcal{A}}(d \log p)^{7 / 6}}{n^{\alpha /(3+9 \alpha)}} 
+ +\frac{\Psi_{2, \alpha, \mathcal{A}}^{1 / 3} \Psi_{2,0, \mathcal{A}}^{1 / 3}(d \log p)^{2 / 3}}{n^{\alpha /(3+9 \alpha)}}+\frac{\Phi_{\psi_\nu, \alpha, \mathcal{A}}(d \log p)^{1+\nu}}{n^{\alpha /(1+3 \alpha)}}
+\end{aligned}\nonumber
+\end{equation}
+provided that $(d\log p)^{\max \{6 \nu-1,(5+6 \nu) / 4\}}=o\left\{n^{\alpha /(1+3 \alpha)}\right\}$\\
+(ii) If $\mathcal{A}$ satisfies \textbf{Condition 1,3}, and $\Phi_{\psi_{\nu},\alpha,\mathcal{A}}<\infty$,
+\begin{equation}
+\begin{aligned}
+\rho_n(\mathcal{A}) \lesssim \frac{a(d \log p)^{1 / 2}}{n}  +\frac{B_n(d \log p)^{7 / 6}}{n^{\alpha /(12+6 \alpha)}} 
+ +\frac{\Psi_{2, \alpha, \mathcal{A}}^{1 / 3} \Psi_{2,0, \mathcal{A}}^{1 / 3}(d \log p)^{2 / 3}}{n^{\alpha /(12+6 \alpha)}}+\frac{\Phi_{\psi_\nu, \alpha, \mathcal{A}}(d \log p)^{1+\nu}}{n^{\alpha /(4+2 \alpha)}}
+\end{aligned}\nonumber
+\end{equation}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{CLT: For sparsely convex set}
+\setlength{\baselineskip}{1.5\baselineskip}
+    \begin{itemize}
+        \item $A$ is a s-sparsely convex set:  
+        \begin{itemize}
+            \item (i): Sparse representation $A = \cap_{q=1}^{K*}A_q$ for convex sets $A_1,...,A_{K*}$.
+            \item (ii): Indicator function $I_{\{w\in A_q\}}$  of each $A_q$ depends on at most $s$ components of $w$.
+        \end{itemize}
+        \pause
+        \item \textbf{(Condition 6)} There exist a universal constant $K_5>0$ such that $\text{Var}(v^TS_{n,X})\geq K_5$ for each $v\in \mathbb{S}^{p-1}$ with $|v|_0\leq s$
+        \item $\mathcal{A}^{sp}(s) :=\{A : A\text{  is s-sparsely convex set }\}$
+    \end{itemize}
+    \note<1>[item]{Now I will talk about the generalization to sparsely convex set. It's more difficult than that in the case of simple convex set.}
+    \note<1>[item]{First, there is the definition of s-sparsely convex set}
+    \note<2>[item]{The Condition 6 is also a non-degenerated condition respect to sparsely convex set. And here we only require $S_{n,X}$ to be not degenerate for sparse vectors. But not require for all vectors.}  
+    \note<2>[item]{Let a family of s-sparsely convex set}
+\end{frame}
+
+\begin{frame}{CLT: For sparsely convex set}
+    \begin{itemize}
+        \item Let $A$ is a $s$-sparsely convex set, $B := \{w: ||w||_{\infty}\leq pn^{5/2}\}$, $A^* = A\cap B$.
+        \item "small" far away from origin: 
+        \begin{equation}
+            \mathbb{P}(S_{n,X}\in B^c)\lesssim B_nn^{-1}, \mathbb{P}(G\in B^c)\lesssim B_nn^{-1}\nonumber
+        \end{equation}
+        \item $|\mathbb{P}(S_{n,X}\in A)-\mathbb{P}(G\in A)|\lesssim |\mathbb{P}(S_{n,X}\in A^*)-\mathbb{P}(G\in A^*)| + B_nn^{-1}$
+        \item $A^*=A\cap B$ is also a $s$-sparsely convex set with $A^* = \cap_{q=1}^{K*}A_q^*$
+    \end{itemize}
+    \note<1>[item]{let $A$ star be the part of $A$ near by the origin. Intuitively, the area away from the origin should be small because we hope that the distribution of $S_{n,X}$ can converge to the normal distribution. }
+    \note<1>[item]{So we just need to bound this term.}
+    \note<1>[item]{Because the A star is also a sparsely convex set, so we can only care about those sparsely set near by the origin}
+\end{frame}
+
+\begin{frame}{CLT: For sparsely convex set}
+$\mathcal{A}^{sp}_1(s) := \{A\in \mathcal{A}^{sp}(s): A\subset B, A\text{ contains a ball with radius }n^{-1}\}$, 
+    \begin{itemize}
+        \item \textbf{Lemma D.1}\footfullcite{CLT1}: $\mathcal{A}^{sp}_1(s) \subset \mathcal{A}^{si}(1,Cs^2)$. Besides, the approximating polyhedron $A^K$ can be chosen to satisfy $|v|_0\leq s$ for all $v\in \mathcal{V}(A^K)$.
+        \item \textbf{Case 1}: If $A^*\in \mathcal{A}^{sp}_1(s)$, by \textbf{Lemma D.1}, we can apply the result for simple convex sets.
+    \end{itemize}
+    \note<1>[item]{The key in the proof is the Lemma D.1, it can convert the problem in the case of sparsely convex set into the case of simple convex sets.}
+\end{frame}
+
+\begin{frame}{CLT: For sparsely convex set}
+    \begin{itemize}
+        \item \textbf{Case 3}: $A^*\notin \mathcal{A}^{sp}_1(s) $, and each $A_q^* $ contains a ball with radius $n^{-1}$, but they are not all the same.
+        %\item For each q, projection $\tau_q :\mathbb{R}^p %\longrightarrow \mathbb{R}^{s_q}$, $w\mapsto #%(w_j)_{j\in J(A_q)}$, where $J(A_q) := \{j: w_j \text{ 
+ %is related to the function value }I_{A_q}\}$
+        \item Note that $A_q^*$ itself is also $s$-sparsely. We can apply \textbf{Lemma D.1} for each $A_q^*$ such that: $A_q^{K_q}\subset A_q^*\subset A_q^{K_q,\frac{1}{n}}$, $\forall q\in [K_*]$
+        \item Let $Q := \cap_{q=1}^{K_*}A_q^{K_q}$, then $Q^{\frac{1}{n}} :=\cap_{q=1}^{K_*}A_q^{K_q,\frac{1}{n}}$, and \[\varnothing = Q^{-\frac{1}{n}}\subset Q\subset A^*\subset Q^{\frac{1}{n}}\]
+        \note<1>[item]{The case 3 is the case that A star doesn't contain a ball with radius n to the power of minus 1, but they are not all the same ball.}
+        \note<1>[item]{Because A∗
+q itself is also s-sparsely. We can apply Lemma D.1 for each A∗
+q such that A star q can be approximated by a polyhedron. And we have the relation, the first equation is because A star doesn't contain a ball with radius n to minus 1}.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{CLT: For sparsely convex set}
+    \begin{itemize}
+        \item Nazarov's inequality gives the bound that \[\mathbb{P}(G\in A^*)\leq \mathbb{P}(G\in Q^{\frac{1}{n}}\textbackslash Q^{-\frac{1}{n}})\lesssim n^{-1}(s^2\log p)^{1/2}\]
+        \item By the result for simple convex set, we can get the estimation of $\mathbb{P}(S_{n,X}\in A^*)$.
+        \item $|\mathbb{P}(S_{n,X}\in A^*)-\mathbb{P}(G\in A^*)|\leq \mathbb{P}(S_{n,X}\in A^*)+\mathbb{P}(G\in A^*)$
+    \end{itemize}
+    \note<1>[item]{Estimate these 2 probability respectively. And finally we deal with the case 3}
+\end{frame}
+
+
+
+\begin{frame}{CLT: For sparsely convex set}
+    \textbf{Case 2(Difficult)}: $A^*\notin \mathcal{A}^{sp}_1(s) $, and at least 1 $A_q$ don't contain a ball with radius $n^{-1}$. 
+    \begin{itemize}
+        \item We need to derive the Berry-Esseen type estimate for convex sets:
+        \begin{equation}
+        \begin{aligned}
+            \sup\limits_{h\in \mathcal{H}}|\mathbb{E}[h(S_{n,X})]-\mathbb{E}[h(G)]| = \sup\limits_{h\in \mathcal{H}} |\int h(x)d(F_n(x)-\Phi(x))|
+            \end{aligned}\nonumber
+        \end{equation} 
+        where $\mathcal{H}$ is the family of indicator function of convex sets.
+        \item Detailed derivation can see \footfullcite{CLT2}, section 9. Motivation can see \footfullcite{Asy}, chapter 7.  
+    \end{itemize}
+    \note<1>[item]{The case 2 is the most difficult part. Because here the Lemma D1 doesn't work. So we have to construct other Berry-Essen type estimation for all convex set.}
+    \note<1>[item]{The proof of detail is also based on Stein method. The detail is so technical and complicated, so I omit here.}
+\end{frame}
+
+
+
+
+\section{Application for Bootstrap}
+
+\begin{frame}{Parametric Bootstrap}
+In theory, $G \sim N(0,\Xi)$ depends on covariance matrix $\Xi$. However, covariance matrix $\Xi$ is unknown in practice. As a result, we need to construct a series of matrix $\{\hat{\Xi}_n\}$ to approximate $\Xi$
+    \begin{itemize}
+        \item Let $\mathcal{X}_n=\{X_1,X_2,...,X_n\}$ a data set, data-dependent Gaussian random vector $\hat{G}|\mathcal{X}_n \sim N(0,\hat{\Xi}_n)$.
+        \item To establish theoretical validity, we have to bound
+        \begin{equation}
+            \hat{\rho}_n(\mathcal{A}):= \sup\limits_{A\in \mathcal{A}}|\mathbb{P}(S_{n,X}\in A)-\mathbb{P}(\hat{G}\in A|\mathcal{X}_n)|\nonumber
+        \end{equation}
+    \end{itemize}
+    \note<1>[item]{Here, the random vector sequence X serve as data set.}
+\end{frame}
+
+\begin{frame}{Parametric Bootstrap}
+    \begin{itemize}
+        \item $\hat{\rho}_n(\mathcal{A})\leq \rho_n(\mathcal{A}) + \sup\limits_{A\in \mathcal{A}}|\mathbb{P}(\hat{G}\in A|\mathcal{X}_n)-\mathbb{P}(G\in A)|$
+        \item The problem is boiled down to estimate the difference between covariance matrix.
+        \item $ \Delta_{n,r}:=|\hat{\Xi}_{n}-\Xi|_{\infty}$ 
+        \item By Gaussian comparison, we have \[\hat{\rho}_{n}(\mathcal{A}^{\mathrm{re}})\lesssim\rho_{n}(\mathcal{A}^{\mathrm{re}})+\Delta_{n,r}^{1/3}(\operatorname{log}p)^{2/3}.\]
+        \item Hope: Select proper approximation matrices $\hat{\Xi}_n$ such that $\Delta_{n,r} = o_\text{p}\{(\log p)^{-2}\}$
+    \end{itemize}
+    \note<1>[item]{By triangle inequality, we have this inequality. And the first term have been bounded in the theoretical part. So we only need to bound the second term, it's a difference of two probabilities of Guassian random vector.}
+    \note<1>[item]{both G hat given the data set and G is normal distribution, so The problem is boiled down to estimate the difference of their covariance matrix}
+    \note<1>[item]{we have already get the estimate of $\rho_n$, so the rest is the delta n,r}
+\end{frame}
+
+\begin{frame}{Parametric Bootstrap}
+    \begin{itemize}
+        \item we suggest to adopt the kernel-type estimator for its long-run covariance matrix, that is
+        \begin{equation}
+            \hat{\Xi}_n=\sum_{j=-n+1}^{n-1}\mathcal{K}\bigg(\frac{j}{b_n}\bigg)\hat{H}_j \nonumber
+        \end{equation}
+        where $\hat{H}_{j}=n^{-1}\sum_{t=j+1}^{n}(X_{t}-\bar{X})(X_{t-j}-\bar{X})^{\top}$ if $j\geq0$ and \\$\hat{H}_{j}=n^{-1}\sum_{t=-j+1}^{n}(X_{t+j}-\bar{X})(X_{t}-\bar{X})^{\top}$ if $j<0$ with optimal kernel
+        \begin{equation}
+            \mathcal{K}_{\mathrm{QS}}(x)=\frac{25}{12\pi^2x^2}\left\{\frac{\sin(6\pi x/5)}{6\pi x/5}-\cos(6\pi x/5)\right\}\nonumber
+        \end{equation}
+    \end{itemize}
+    \note<1>[item]{Here is an approach to select matrices. And the optimal kernel K of this form is the KQS}
+\end{frame}
+
+\begin{frame}{Parametric Bootstrap}
+\begin{itemize}
+    \item With assumption above, we have 
+    \[\Delta_{n,r}=O_{\mathrm{p}}\{B_{n}^{2}n^{-c_{1}}(\operatorname{log}p)^{c_{2}}\}+O(B_{n}^{2}n^{-\rho})\]
+    \item we see that our proposed parametric bootstrap procedure is asymptotically valid even if the dimension $p$ grows sub-exponentially fast in the sample size $n$
+    \end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[shrink]
+\frametitle{Reference}
+\small
+\printbibliography
+\note<1>[item]{That's end}
+\note<1>[item]{Any question?}
+\note<1>[item]{Thank you for listening}
+\end{frame}
+
+\end{document}
